@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly group: 'com.google.android', name: 'android', version: '2.2.1'
+}
+
+ext {
+    group = "com.th.anlib"
+    module = "log"
+    version = "1.0.0"
+    desc = "log util"
+}
+
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+apply from: 'https://raw.githubusercontent.com/huhuang03/up-bintray-lib-config/master/config.gradle'
