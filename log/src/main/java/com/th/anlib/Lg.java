@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class Lg {
-    public static final String TAG = "Crawl";
+    public static String TAG = "Crawl";
 
     public static void i(String msg) {
         Log.i(TAG, msg);
