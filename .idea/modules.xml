@@ -5,6 +5,7 @@
       <module fileurl="file://$USER_HOME$/Developer/source/AnLib/AnLib.iml" filepath="$USER_HOME$/Developer/source/AnLib/AnLib.iml" />
       <module fileurl="file://$USER_HOME$/Developer/source/AnLib/app/app.iml" filepath="$USER_HOME$/Developer/source/AnLib/app/app.iml" />
       <module fileurl="file://$USER_HOME$/Developer/source/AnLib/log/log.iml" filepath="$USER_HOME$/Developer/source/AnLib/log/log.iml" />
+      <module fileurl="file://$USER_HOME$/Developer/source/AnLib/xposed_lib/xposed_lib.iml" filepath="$USER_HOME$/Developer/source/AnLib/xposed_lib/xposed_lib.iml" />
     </modules>
   </component>
 </project>

@@ -1,1 +1,1 @@
-include ':app', ':log'
+include ':app', ':log', ':xposed_lib'

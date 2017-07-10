@@ -1,0 +1,23 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // xposed
+    compileOnly('de.robv.android.xposed:api:82') { transitive = true }
+    compileOnly('de.robv.android.xposed:api:82:sources') { transitive = true }
+    compileOnly group: 'com.google.android', name: 'android', version: '2.2.1'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+ext {
+    group = "com.base.common"
+    module = "xposed_lib"
+    version = "1.0.0"
+    desc = "Xposed libs"
+}
+
+
+apply from: 'https://raw.githubusercontent.com/huhuang03/up-bintray-lib-config/master/config.gradle'
