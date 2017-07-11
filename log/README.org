@@ -1,2 +1,5 @@
+** gradle
+=compile 'com.th.anlib:log:1.0.2'=
+
 ** Set tag
 ~Lg.Tag = Your global log~

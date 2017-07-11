@@ -1,5 +1,18 @@
 安卓重复写的代码
 
-| 工程 | 说明                        | 使用方法 |
-|------+-----------------------------+----------|
-| Lg   | 打印日志的工具 | [[https://github.com/huhuang03/anlib/tree/master/log][Lg]] |
+** 将jcenter特定repo加入到顶层=build.gradle=中
+#+BEGIN_SRC 
+allprojects {
+    repositories {
+        jcenter()
+
+        maven {
+            url "https://dl.bintray.com/huhuang03/maven"
+        }
+    }
+}
+#+END_SRC
+
+| 工程 | 说明           | 使用方法                                                   | 需要引入jcenter |
+|------+----------------+------------------------------------------------------------+-----------------|
+| Lg   | 打印日志的工具 | [[https://github.com/huhuang03/anlib/tree/master/log][Lg]] | 是              |
