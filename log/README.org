@@ -1,2 +1,2 @@
 ** Set tag
-`Lg.Tag = "Your global tag"
+~Lg.Tag = "Your global log"~
