@@ -1,0 +1,2 @@
+** Set tag
+`Lg.Tag = "Your global tag"
