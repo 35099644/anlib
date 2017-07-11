@@ -1,5 +1,9 @@
 ** gradle
-=compile 'com.th.anlib:log:1.0.2'=
+#+BEGIN_SRC 
+compile 'com.th.anlib:log:1.0.2'
+#+END_SRC
 
 ** Set tag
-~Lg.Tag = Your global log~
+#+BEGIN_SRC 
+Lg.Tag = Your global log
+#+END_SRC
