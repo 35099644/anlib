@@ -1,6 +1,6 @@
 安卓重复写的代码
 
-** 将jcenter特定repo加入到顶层=build.gradle=中
+** 将jcenter特定repo加入到顶层build.gradle中
 #+BEGIN_SRC 
 allprojects {
     repositories {
