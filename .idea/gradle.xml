@@ -10,6 +10,7 @@
             <option value="$USER_HOME$/Developer/source/AnLib" />
             <option value="$USER_HOME$/Developer/source/AnLib/app" />
             <option value="$USER_HOME$/Developer/source/AnLib/log" />
+            <option value="$USER_HOME$/Developer/source/AnLib/sync_websocket" />
             <option value="$USER_HOME$/Developer/source/AnLib/xposed_lib" />
           </set>
         </option>
