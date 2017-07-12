@@ -15,17 +15,17 @@ import java.net.InetSocketAddress;
 
 public class WebSocketServerWrap {
     private WebSocketServer mServer;
-    private Handler mHandler;
+    private MsgHandler      mHandler;
 
-    public interface Handler {
+    public interface MsgHandler {
         void handle(String request, Callback callback);
     }
 
     public interface Callback {
-        void onFinish(String rst);
+        void onFinish(Object rst);
     }
 
-    public WebSocketServerWrap(int port, Handler handler) {
+    public WebSocketServerWrap(int port, MsgHandler handler) {
         mHandler = handler;
         mServer = new WebSocketServer(new InetSocketAddress(port)) {
             @Override
@@ -44,8 +44,8 @@ public class WebSocketServerWrap {
                 if (mHandler != null) {
                     mHandler.handle(msgWrap.msg, new Callback() {
                         @Override
-                        public void onFinish(String rst) {
-                            MsgWrap rstMsgWrap = new MsgWrap(msgWrap.id, rst);
+                        public void onFinish(Object rst) {
+                            MsgWrap rstMsgWrap = new MsgWrap(msgWrap.id, new Gson().toJson(rst));
                             conn.send(new Gson().toJson(rstMsgWrap));
                         }
                     });
@@ -57,6 +57,9 @@ public class WebSocketServerWrap {
 
             }
         };
+    }
+
+    public void start() {
         mServer.start();
     }
 

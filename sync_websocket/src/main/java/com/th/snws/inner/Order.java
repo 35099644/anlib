@@ -10,6 +10,11 @@ import com.th.snws.WebSocketClientWrap;
 public class Order {
     public MsgWrap mMsgWrap;
 
+    /**
+     * 回应clazz
+     */
+    public Class responseClass;
+
     public boolean hasFinish = false;
 
     public WebSocketClientWrap.WebSocketServerCallback callback;
