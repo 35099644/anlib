@@ -19,8 +19,9 @@ public class Order {
 
     public WebSocketClientWrap.WebSocketServerCallback callback;
 
-    public Order(MsgWrap msgWrap, WebSocketClientWrap.WebSocketServerCallback callback) {
-        mMsgWrap = msgWrap;
+    public Order(MsgWrap msgWrap, Class responseClass, WebSocketClientWrap.WebSocketServerCallback callback) {
+        this.responseClass = responseClass;
+        this.mMsgWrap = msgWrap;
         this.callback = callback;
     }
 }

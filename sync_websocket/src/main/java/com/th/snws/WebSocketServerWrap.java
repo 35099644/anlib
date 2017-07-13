@@ -1,6 +1,7 @@
 package com.th.snws;
 
 import com.google.gson.Gson;
+import com.th.anlib.Lg;
 import com.th.snws.inner.MsgWrap;
 
 import org.java_websocket.WebSocket;
@@ -14,6 +15,10 @@ import java.net.InetSocketAddress;
  */
 
 public class WebSocketServerWrap {
+    static {
+        Lg.TAG = "WebSocket";
+    }
+
     private WebSocketServer mServer;
     private MsgHandler      mHandler;
 
@@ -30,23 +35,24 @@ public class WebSocketServerWrap {
         mServer = new WebSocketServer(new InetSocketAddress(port)) {
             @Override
             public void onOpen(WebSocket conn, ClientHandshake handshake) {
-
+                Lg.i("onOpen");
             }
 
             @Override
             public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-
+                Lg.i("onClose");
             }
 
             @Override
             public void onMessage(final WebSocket conn, String message) {
+                Lg.i("onMessage: " + message);
                 final MsgWrap msgWrap = new Gson().fromJson(message, MsgWrap.class);
                 if (mHandler != null) {
                     mHandler.handle(msgWrap.msg, new Callback() {
                         @Override
                         public void onFinish(Object rst) {
-                            MsgWrap rstMsgWrap = new MsgWrap(msgWrap.id, new Gson().toJson(rst));
-                            conn.send(new Gson().toJson(rstMsgWrap));
+                            msgWrap.msg = new Gson().toJson(rst);
+                            conn.send(new Gson().toJson(msgWrap));
                         }
                     });
                 }
@@ -54,7 +60,7 @@ public class WebSocketServerWrap {
 
             @Override
             public void onError(WebSocket conn, Exception ex) {
-
+                Lg.i("onError: ");
             }
         };
     }

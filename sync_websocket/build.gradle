@@ -4,6 +4,7 @@ dependencies {
     compileOnly('org.java-websocket:Java-WebSocket:1.3.0') { transitive = true }
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile('com.google.code.gson:gson:2.8.1') { transitive = true }
+    compile('com.th.anlib:log:1.0.2') { transitive = true }
     compileOnly('com.google.android:android:2.2.1') { transitive = true }
     compile 'junit:junit:4.12'
     compile 'junit:junit:4.12'

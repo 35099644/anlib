@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.gson.Gson;
+import com.th.anlib.Lg;
 import com.th.snws.inner.MsgWrap;
 import com.th.snws.inner.Order;
 
@@ -35,6 +36,7 @@ public class WebSocketClientWrap {
 
             @Override
             public void onMessage(String message) {
+                Lg.i("WebSocket Client onMessage: " + message);
                 final MsgWrap rstMsg = new Gson().fromJson(message, MsgWrap.class);
                 final Order order = orderMap.get(rstMsg.id);
 
@@ -105,7 +107,7 @@ public class WebSocketClientWrap {
         String toSend = new Gson().toJson(msg);
         MsgWrap msgWrap = obtainMsg(toSend);
         mClient.send(new Gson().toJson(msgWrap));
-        orderMap.put(msgWrap.id, new Order(msgWrap, callback));
+        orderMap.put(msgWrap.id, new Order(msgWrap, clazz, callback));
     }
 
     public void send(Object msg, WebSocketServerCallback<String> callback) {
