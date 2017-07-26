@@ -1,1 +1,1 @@
-include ':app', ':log', ':xposed_lib', ':sync_websocket'
+include ':app', ':log', ':xposed_lib', ':sync_websocket', ':volley'
