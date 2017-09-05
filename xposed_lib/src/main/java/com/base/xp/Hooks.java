@@ -12,7 +12,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
  * Hook管理类
- * 本源码只限于学习交流使用，其用途于与原作者无关
  * Created by york on 28/03/2017.
  */
 

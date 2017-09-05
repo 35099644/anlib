@@ -9,7 +9,8 @@ import java.lang.reflect.Field;
 import de.robv.android.xposed.XC_MethodHook;
 
 /**
- * 本源码只限于学习交流使用，其用途于与原作者无关\nCreated by york on 10/06/2017.
+ * Xp utils
+ * Created by jdb on 10/06/2017.
  */
 
 public class Xps {

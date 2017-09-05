@@ -1,21 +1,21 @@
 package com.th.net.volley;
 
 
+import android.util.Log;
+
+import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
-import com.th.anlib.Lg;
 import com.th.net.Thyi;
 
 import java.util.Map;
 
 import rx.Subscriber;
 
-import static com.sun.xml.internal.ws.api.message.Packet.Status.Request;
-import static com.sun.xml.internal.ws.api.message.Packet.Status.Response;
 
 
 /**
@@ -40,7 +40,7 @@ public class VolleyObjectRequest<T> extends Request<T>{
             Log.i(Thyi.TAG, "parseNetworkResponse(), for url: " + getUrl() + "\njson: " + json);
             return Response.success(new Gson().fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
         } catch (Exception e) {
-            Lg.e(Thyi.TAG, "parse json error: " + e);
+            Log.e(Thyi.TAG, "parse json error: " + e);
             return Response.error(new ParseError(e));
         }
     }
@@ -58,7 +58,7 @@ public class VolleyObjectRequest<T> extends Request<T>{
 
     @Override
     public void deliverError(VolleyError error) {
-        Lg.i(Thyi.TAG, "error: " + error.getMessage());
+        Log.i(Thyi.TAG, "error: " + error.getMessage());
         Throwable t = error;
         if (t == null) {
             t = new Exception(error);

@@ -1,5 +1,8 @@
 package com.th.anlib;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -28,9 +31,8 @@ public class FileLog {
 
     private Thread mWorkThread;
 
-    private final List<String> mCacheList = new ArrayList<>();
+    private Handler mHandler;
 
-    private List<String> mWriteList = new ArrayList<>();
 
     private static FileLog instance;
 
@@ -52,7 +54,7 @@ public class FileLog {
 
     public void setLogFolder(String logFolder) {
         if (!TextUtils.isEmpty(logFolder)) {
-            FileLog.logFolder = "/sdcard/" + logFolder;
+            FileLog.logFolder = "/sdcard/" + logFolder + "/";
         }
     }
 
@@ -66,27 +68,15 @@ public class FileLog {
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            while (true) {
-                synchronized (mCacheList) {
-                    if (mCacheList.isEmpty()) {
-                        return;
-                    }
-                    mWriteList.clear();
-                    mWriteList.addAll(mCacheList);
-                    mCacheList.clear();
-                }
-
-                for (String toWrite : mWriteList) {
+            Looper.prepare();
+            mHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    String toWrite = (String) msg.obj;
                     writeSingleLine(toWrite);
                 }
-                mWriteList.clear();
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            };
+            Looper.loop();
         }
     };
 
@@ -109,8 +99,10 @@ public class FileLog {
         }
         String toWrite = sdf.format(new Date()) + " " + levelS + " " + log;
 
-        synchronized (mCacheList) {
-            mCacheList.add(toWrite);
+        if (mHandler != null) {
+            Message obtain = Message.obtain();
+            obtain.obj = toWrite;
+            mHandler.sendMessage(obtain);
         }
     }
 

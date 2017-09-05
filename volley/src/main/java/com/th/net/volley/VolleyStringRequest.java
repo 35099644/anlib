@@ -1,6 +1,11 @@
 package com.th.net.volley;
 
-import com.th.anlib.Lg;
+import android.util.Log;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.th.net.Thyi;
 
 import java.util.HashMap;
@@ -19,14 +24,14 @@ public class VolleyStringRequest extends StringRequest {
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Lg.i(Thyi.TAG, "success: " + response);
+                    Log.i(Thyi.TAG, "success: " + response);
                     subscriber.onNext(response);
                     subscriber.onCompleted();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Lg.i(Thyi.TAG, "error: " + error.getMessage());
+                    Log.i(Thyi.TAG, "error: " + error.getMessage());
                     Throwable t = error;
                     if (t == null) {
                         t = new Exception(t);
@@ -40,7 +45,7 @@ public class VolleyStringRequest extends StringRequest {
 
     @Override
     public Map<String, String> getParams() {
-        Lg.i(Thyi.TAG, "params: " + params);
+        Log.i(Thyi.TAG, "params: " + params);
         return params;
     }
 

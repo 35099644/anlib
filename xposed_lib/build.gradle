@@ -15,7 +15,7 @@ targetCompatibility = "1.7"
 ext {
     group = "com.base.common"
     module = "xposed_lib"
-    version = "1.0.0"
+    version = "1.0.2"
     desc = "Xposed libs"
 }
 

@@ -1,16 +1,20 @@
 package com.th.net;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.th.anlib.Lg;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.th.net.volley.VolleyObjectRequest;
+import com.th.net.volley.VolleyStringRequest;
 
 import java.util.Map;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import thnet.thanlib.com.thyi.volley.VolleyObjectRequest;
-import thnet.thanlib.com.thyi.volley.VolleyStringRequest;
 
 /**
  * Created by yi on 2/22/16.
@@ -48,7 +52,7 @@ public class Thyi {
     // MARK: private
     private static <T>Observable<T> requestInternal(final int method, final String url,
                                                     final Map<String, String> params, final Class<T> clazz) {
-        Lg.i(TAG, "begin " + (method == GET? "Get" : "Post") + " request, url: " + url + ", params: " + params);
+        Log.i(TAG, "begin " + (method == GET? "Get" : "Post") + " request, url: " + url + ", params: " + params);
 
         if (requestQueue == null) {
             throw new RuntimeException("Must call init(context) before use");
