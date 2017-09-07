@@ -1,4 +1,4 @@
-package com.th.snws;
+package com.will.snws;
 
 import com.google.gson.Gson;
 
