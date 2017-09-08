@@ -1,10 +1,15 @@
 package com.th.net;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -12,11 +17,14 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static io.reactivex.Observable.create;
 
 /**
  * Created by yi on 2/22/16.
@@ -39,57 +47,15 @@ public class Thyi {
     }
 
     public <T>Observable<T> request(String url, Map<String, String> params, Class<T> clazz) {
-        return requestInternal(POST, url, params, clazz);
+        return request(POST, url, params, clazz);
     }
 
     public <T>Observable<T> request(int method, String url, Map<String, String> params, Class<T> clazz) {
         return requestInternal(method, url, params, clazz);
     }
 
-    public Observable<Bitmap> requestImage(String url, Map<String, String> param) {
-        ObservableOnSubscribe<Bitmap> onSubsribe = new ObservableOnSubscribe<T>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<T> e) throws Exception {
-                FormBody.Builder builder = new FormBody.Builder();
-                if (param != null) {
-                    for (String key : param.keySet()) {
-                        builder.add(key, param.get(key));
-                    }
-                }
-
-                String finalUrl = url;
-                if (method == GET) {
-                    finalUrl = packageGetParam(url, param);
-                }
-
-
-                Request.Builder rb = new Request.Builder()
-                        .url(finalUrl)
-                        .post(builder.build());
-
-                Request request = rb.build();
-                Log.i(TAG, "send " + finalUrl + ", param: " + param);
-
-                try {
-                    Response response = okClient.newCall(request).execute();
-                    String rst = response.body().string();
-                    T bean;
-                    if (clazz == String.class) {
-                        bean = (T) rst;
-                    } else {
-                        bean = new Gson().fromJson(rst, clazz);
-                    }
-                    e.onNext(bean);
-                    e.onComplete();
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    e.onError(ex);
-                    e.onComplete();
-                }
-            }
-        };
-        return Observable.create(onSubsribe).observeOn(AndroidSchedulers.mainThread());
+    public Observable<Bitmap> requestImage(final String url, final Map<String, String> param) {
+        return request(url, param, Bitmap.class);
     }
 
     private <T>Observable<T> requestInternal(final int method, final String url,
@@ -100,6 +66,7 @@ public class Thyi {
                 FormBody.Builder builder = new FormBody.Builder();
 
                 String finalUrl = url;
+
                 if (method == GET) {
                     finalUrl = packageGetParam(url, param);
                 } else {
@@ -110,25 +77,58 @@ public class Thyi {
                     }
                 }
 
+                String refer = "";
+
+                try {
+                    URL aURL = new URL(url);
+                    refer = aURL.getProtocol() + "://" + aURL.getHost();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
                 Request.Builder rb = new Request.Builder()
                         .url(finalUrl)
+                        .header("referer", refer)
                         .post(builder.build());
 
+
                 Request request = rb.build();
+
                 Log.i(TAG, "send " + finalUrl + ", param: " + param);
 
                 try {
                     Response response = okClient.newCall(request).execute();
-                    String rst = response.body().string();
-                    T bean;
-                    if (clazz == String.class) {
-                        bean = (T) rst;
+
+                    if (clazz == Response.class) {
+                        e.onNext((T) response);
+                        e.onComplete();
+                    } else if (clazz == Bitmap.class) {
+                        InputStream inputStream = response.body().byteStream();
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        if (bitmap != null) {
+                            e.onNext((T) bitmap);
+                            e.onComplete();
+                        } else {
+                            e.onError(null);
+                            e.onComplete();
+                        }
                     } else {
-                        bean = new Gson().fromJson(rst, clazz);
+                        String rst = response.body().string();
+                        T bean;
+
+                        if (clazz == String.class) {
+                            bean = (T) rst;
+                        } else if (clazz == JSONObject.class) {
+                            bean = (T) new JSONObject(rst);
+                        }
+
+                        else {
+                            bean = new Gson().fromJson(rst, clazz);
+                        }
+
+                        e.onNext(bean);
+                        e.onComplete();
                     }
-                    e.onNext(bean);
-                    e.onComplete();
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -137,7 +137,7 @@ public class Thyi {
                 }
             }
         };
-        return Observable.create(onSubsribe).observeOn(AndroidSchedulers.mainThread());
+        return create(onSubsribe).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     private String packageGetParam(String url, Map<String, String> params) {

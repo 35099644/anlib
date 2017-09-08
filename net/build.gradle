@@ -6,6 +6,9 @@ android {
     compileSdkVersion 24
     buildToolsVersion '25.0.0'
 
+    defaultConfig {
+        minSdkVersion 9
+    }
 }
 
 dependencies {
@@ -18,7 +21,6 @@ dependencies {
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile('io.reactivex.rxjava2:rxjava:2.1.0') { transitive = true }
-//    compile ('io.reactivex:rxjava:1.1.0') { transitive = true }
 
     compile ('com.google.code.gson:gson:2.6.2') { transitive = true }
 }
