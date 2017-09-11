@@ -122,7 +122,7 @@ public class Thyi {
                         e.onComplete();
                     } else {
                         String rst = response.body().string();
-                        Log.i(TAG, "rst: " + rst + "\n\t for url: " + request.url() + "\n\t cookie: " + request.header("cookie") + "\n\t Cookie: " + request.header("Cookie"));
+                        Log.i(TAG, "rst: " + rst + "\n\t for url: " + request.url());
                         T bean;
 
                         if (clazz == String.class) {
