@@ -55,47 +55,57 @@ public class Thyi {
     }
 
     public Observable<Bitmap> requestImage(final String url, final Map<String, String> param) {
-        return request(url, param, Bitmap.class);
+        return request(GET, url, param, Bitmap.class);
     }
 
     private <T>Observable<T> requestInternal(final int method, final String url,
                                                     final Map<String, String> param, final Class<T> clazz) {
+        FormBody.Builder postBuilder = new FormBody.Builder();
+
+        String finalUrl = url;
+
+        if (method == GET) {
+            finalUrl = packageGetParam(url, param);
+        } else {
+            if (param != null) {
+                for (String key : param.keySet()) {
+                    postBuilder.add(key, param.get(key));
+                }
+            }
+        }
+
+        String refer = "";
+
+        try {
+            URL aURL = new URL(url);
+            refer = aURL.getProtocol() + "://" + aURL.getHost();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        Request.Builder rb = new Request.Builder()
+                .url(finalUrl)
+                .header("referer", refer)
+                .header("user-agent", "Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Mobile Safari/537.36");
+
+        if (method == GET) {
+            rb.get();
+        } else {
+            rb.post(postBuilder.build());
+        }
+
+
+        Request request = rb.build();
+
+        return request(request, clazz);
+
+    }
+
+    public <T>Observable<T> request(final Request request, final Class<T> clazz) {
+        Log.i(TAG, "send: " + request.url().toString());
         ObservableOnSubscribe<T> onSubsribe = new ObservableOnSubscribe<T>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<T> e) throws Exception {
-                FormBody.Builder builder = new FormBody.Builder();
-
-                String finalUrl = url;
-
-                if (method == GET) {
-                    finalUrl = packageGetParam(url, param);
-                } else {
-                    if (param != null) {
-                        for (String key : param.keySet()) {
-                            builder.add(key, param.get(key));
-                        }
-                    }
-                }
-
-                String refer = "";
-
-                try {
-                    URL aURL = new URL(url);
-                    refer = aURL.getProtocol() + "://" + aURL.getHost();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-
-                Request.Builder rb = new Request.Builder()
-                        .url(finalUrl)
-                        .header("referer", refer)
-                        .post(builder.build());
-
-
-                Request request = rb.build();
-
-                Log.i(TAG, "send " + finalUrl + ", param: " + param);
-
                 try {
                     Response response = okClient.newCall(request).execute();
 
@@ -105,15 +115,14 @@ public class Thyi {
                     } else if (clazz == Bitmap.class) {
                         InputStream inputStream = response.body().byteStream();
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        if (bitmap != null) {
-                            e.onNext((T) bitmap);
-                            e.onComplete();
-                        } else {
-                            e.onError(null);
-                            e.onComplete();
+                        if (bitmap == null) {
+                            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
                         }
+                        e.onNext((T) bitmap);
+                        e.onComplete();
                     } else {
                         String rst = response.body().string();
+                        Log.i(TAG, "rst: " + rst + "\n\t for url: " + request.url() + "\n\t cookie: " + request.header("cookie") + "\n\t Cookie: " + request.header("Cookie"));
                         T bean;
 
                         if (clazz == String.class) {
