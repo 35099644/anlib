@@ -36,14 +36,12 @@ public class Thyi {
     public static final int POST = 1;
     private OkHttpClient okClient;
 
+    public Thyi() {
+        this(new OkHttpClient());
+    }
 
-    public void init(CookieJar cookieJar) {
-        if (cookieJar == null) {
-            cookieJar = CookieJar.NO_COOKIES;
-        }
-        okClient = new OkHttpClient.Builder()
-                .cookieJar(cookieJar)
-                .build();
+    public Thyi(OkHttpClient okClient) {
+        this.okClient = okClient;
     }
 
     public <T>Observable<T> request(String url, Map<String, String> params, Class<T> clazz) {
