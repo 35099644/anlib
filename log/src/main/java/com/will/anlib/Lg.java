@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class Lg {
-    private static FileLog fileLog = FileLog.instance();
+    private static FileLog fileLog = FileLog.createDefaultFileLog();
 
     private static String TAG = "test";
 
@@ -27,7 +27,6 @@ public class Lg {
      */
     public static void logToFile(boolean logToFile, String logFolder) {
         Lg.logToFile = logToFile;
-        fileLog.setLogFolder(logFolder);
     }
 
     public static void i(String msg) {

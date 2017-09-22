@@ -22,40 +22,35 @@ import java.util.List;
  */
 
 public class FileLog {
+    private static final String DEFAULT_LOG_FOLDER = "/sdcard/common_log/";
+
     private SimpleDateFormat sdf;
     private LogFile mLogFile;
 
     private int curWriteNum = 0;
 
-    private static String logFolder =  "/sdcard/common_log/";
+
+    private String logFolder = "";
 
     private Thread mWorkThread;
 
     private Handler mHandler;
 
 
-    private static FileLog instance;
-
-    private FileLog() {
+    private FileLog(String logPath) {
         sdf = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
-        checkThreadAlive();
+        logFolder = logPath;
     }
 
-    public static FileLog instance() {
-        if (instance == null) {
-            synchronized (FileLog.class) {
-                if (instance == null) {
-                    instance = new FileLog();
-                }
-            }
-        }
-        return instance;
+    public static FileLog createDefaultFileLog() {
+        return new FileLog(DEFAULT_LOG_FOLDER);
     }
 
-    public void setLogFolder(String logFolder) {
-        if (!TextUtils.isEmpty(logFolder)) {
-            FileLog.logFolder = "/sdcard/" + logFolder + "/";
-        }
+    /**
+     * 根据路径拿到FileLog。注意，这里的路径为全路径
+     */
+    public static FileLog createFileLogByFilePath(String logFloder) {
+        return new FileLog(logFloder);
     }
 
     private synchronized void checkThreadAlive() {
@@ -64,6 +59,7 @@ public class FileLog {
             mWorkThread.start();
         }
     }
+
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -154,7 +150,7 @@ public class FileLog {
      * 得到今天对应的日志文件
      */
     private PrintWriter getFis() {
-        if (mLogFile == null) mLogFile = new LogFile();
+        if (mLogFile == null) mLogFile = new LogFile(logFolder);
 
         if (!mLogFile.isInToday()) {
             PrintWriter pw = mLogFile.pw;
@@ -163,7 +159,7 @@ public class FileLog {
             }
             mLogFile = null;
 
-            mLogFile = new LogFile();
+            mLogFile = new LogFile(logFolder);
         }
         return mLogFile.pw;
     }
@@ -174,7 +170,10 @@ public class FileLog {
         long time;
         private Calendar fileCalendar;
 
-        LogFile() {
+        private String logFolder;
+
+        LogFile(String logFolder) {
+            this.logFolder = logFolder;
             this.time = System.currentTimeMillis();
             fileCalendar = Calendar.getInstance();
             fileCalendar.setTimeInMillis(time);
