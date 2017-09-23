@@ -6,7 +6,7 @@ import android.util.Log;
  * Created by york on 07/07/2017.
  */
 
-public class Lg {
+public class TLg {
     private static FileLog fileLog = FileLog.createDefaultFileLog();
 
     private static String TAG = "test";
@@ -17,7 +17,7 @@ public class Lg {
      * 设置tag
      */
     public static void setTag(String tag) {
-        Lg.TAG = tag;
+        TLg.TAG = tag;
     }
 
     /**
@@ -26,7 +26,7 @@ public class Lg {
      * @param logFolder 如果log到文件，设置log的文件夹
      */
     public static void logToFile(boolean logToFile, String logFolder) {
-        Lg.logToFile = logToFile;
+        TLg.logToFile = logToFile;
     }
 
     public static void i(String msg) {
