@@ -40,32 +40,34 @@ public class NetSceneQueue extends BaseMock {
      */
     public void enqueueTask(NetSceneBase netSceneBase, Callback callback) {
         // 这里我们使用QBarStringHandler是因为我们不能new一个接口，只能通过hook方式绕个弯实现回调
-        Log.i(Config.TAG, "type: " + netSceneBase.getType());
+        Log.i(Config.TAG, "enqueue task type: " + netSceneBase.getType());
         Object wxCallback = XposedHelpers.newInstance(Classes.QBarStringHandler);
-        addCallback(wxCallback);
+        Log.i(Config.TAG, "create callback: " + wxCallback);
+
+        addCallback(wxCallback, netSceneBase.getType());
         Helper.callbackMap.put(wxCallback, callback);
 
         XposedHelpers.callMethod(real, "a", netSceneBase.real, 0);      // 0 是默认，因为我看到大多数都是传0
-    }
 
-    private static final int DEFAULT_CODE = 233;   // 我们先硬编码233
+        Log.i(Config.TAG, "enqueu taskk: " + netSceneBase.real);
+    }
 
     /**
      * 增加Callback
      */
-    private void addCallback(Object wxCallback) {
-        XposedHelpers.callMethod(real, "a", DEFAULT_CODE, wxCallback);
+    private void addCallback(Object wxCallback, int type) {
+        XposedHelpers.callMethod(real, "a", type, wxCallback);
     }
 
-    public void removeCallback(Object wxCallback) {
-        XposedHelpers.callMethod(real, "b", DEFAULT_CODE, wxCallback);
+    public void removeCallback(Object wxCallback, int type) {
+        XposedHelpers.callMethod(real, "b", type, wxCallback);
     }
 
     public interface Callback {
         /**
          * 注意这里的netScene进行了一个重新初始化，里面的real是微信给的，但是实例可能是重新初始化包装了的
          */
-        void onFinish(int errType, int errCode, String errMsg, NetSceneBase netSceneBase);
+        void onFinish(int errType, int errCode, String errMsg, Object netSceneBaseReal);
     }
 
     /**
@@ -83,9 +85,12 @@ public class NetSceneQueue extends BaseMock {
                         Log.i(Config.TAG, "GetA8KeyCallback");
                         if (callbackMap.containsKey(param.thisObject)) {
                             param.setResult(null);
+                            NetSceneBase netSceneBase = new NetSceneBase(param.args[3]);
                             Log.i(Config.TAG, "callback class: " + param.args[3].getClass().getSimpleName());
-                            callbackMap.get(param.thisObject).onFinish((int)param.args[0], (int)param.args[1], (String)param.args[2], new NetSceneGetA8Key(param.args[3]));
-                            NetSceneQueue.instance().removeCallback(param.thisObject);
+
+                            callbackMap.get(param.thisObject).onFinish((int)param.args[0], (int)param.args[1], (String)param.args[2], param.args[3]);
+
+                            NetSceneQueue.instance().removeCallback(param.thisObject, netSceneBase.getType());
                         } else {
                             // do nothing just go on
                         }

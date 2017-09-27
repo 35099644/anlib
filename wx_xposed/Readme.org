@@ -1,0 +1,7 @@
+一套微信hook，使用web socket来进行通信的，调微信功能的系统
+
+** 微信端
+调用=WxXposedLib.initialWx(Application wxApplication, ClassLoader wxClassLoader)=来进行初始化
+
+** 客户端
+使用=new Sender(int port)=来进行初始化客户端，然后调用=Sender.send(BaseReqeust request)=来发送请求

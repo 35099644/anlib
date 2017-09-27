@@ -20,26 +20,27 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 /**
+ * DataSource 请求类
  * Created by th on 22/9/2017.
  */
 
-public class DataSource {
+public class WxXposedDs {
     private Thyi thyi;
 
-    private static DataSource instance;
+    private static WxXposedDs instance;
 
-    private DataSource() {
+    private WxXposedDs() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(MMApp.app())))
                 .build();
         thyi = new Thyi(okHttpClient);
     }
 
-    public static DataSource instance() {
+    public static WxXposedDs instance() {
         if (instance == null) {
-            synchronized (DataSource.class) {
+            synchronized (WxXposedDs.class) {
                 if (instance == null) {
-                    instance = new DataSource();
+                    instance = new WxXposedDs();
                 }
             }
         }

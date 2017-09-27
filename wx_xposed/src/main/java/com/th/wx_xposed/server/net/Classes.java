@@ -19,8 +19,6 @@ public class Classes {
 
     public static Class NetSceneGetA8Key;
 
-    public static Class NetSceneGetA8Key$sb;
-
     public static Class WebViewIInterface;
 
     public static Class MMCore;

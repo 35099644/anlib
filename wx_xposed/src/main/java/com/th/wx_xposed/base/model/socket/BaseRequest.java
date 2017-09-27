@@ -1,4 +1,4 @@
-package com.th.wx_xposed.base.socket;
+package com.th.wx_xposed.base.model.socket;
 
 /**
  * Created by th on 25/9/2017.

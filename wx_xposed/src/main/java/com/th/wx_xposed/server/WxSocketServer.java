@@ -1,8 +1,11 @@
 package com.th.wx_xposed.server;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
-import com.th.wx_xposed.base.socket.BaseRequest;
-import com.th.wx_xposed.base.socket.LoginQrCode;
+import com.th.wx_xposed.base.Config;
+import com.th.wx_xposed.base.model.socket.BaseRequest;
+import com.th.wx_xposed.base.model.socket.LoginQrCodeRequest;
 import com.th.wx_xposed.server.requesthandler.BaseRequestHandler;
 import com.th.wx_xposed.server.requesthandler.EmptyHandler;
 import com.th.wx_xposed.server.requesthandler.ScanQrCodeHandler;
@@ -19,10 +22,11 @@ public class WxSocketServer {
      * 处理消息
      */
     public void handleMessage(WebSocket conn, String message) {
+
         String action = new Gson().fromJson(message, BaseRequest.class).action;
         BaseRequestHandler handler = null;
 
-        if (LoginQrCode.class.equals(action)) {
+        if (LoginQrCodeRequest.ACTION.equals(action)) {
             handler = new ScanQrCodeHandler();
         }
 
@@ -31,11 +35,6 @@ public class WxSocketServer {
         }
 
         handler.handleRequest(conn, message);
-
-
-        if (LoginQrCode.ACTION.equals(action)) {    // mp.weixin.qq 登录
-        }
-
     }
 
 }

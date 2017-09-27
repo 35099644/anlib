@@ -1,8 +1,8 @@
 package com.th.wx_xposed.server.requesthandler;
 
 import com.google.gson.Gson;
-import com.th.wx_xposed.base.socket.BaseRequest;
-import com.th.wx_xposed.base.socket.BaseResponse;
+import com.th.wx_xposed.base.model.socket.BaseRequest;
+import com.th.wx_xposed.base.model.socket.BaseResponse;
 
 import org.java_websocket.WebSocket;
 

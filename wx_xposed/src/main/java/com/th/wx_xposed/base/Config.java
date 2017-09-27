@@ -6,4 +6,6 @@ package com.th.wx_xposed.base;
 
 public interface Config {
     String TAG = "wx_xposed";
+
+    int DEFUALT_PORT = 12321;
 }

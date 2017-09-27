@@ -1,8 +1,11 @@
 package com.th.wx_xposed.client;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
-import com.th.wx_xposed.base.socket.BaseRequest;
-import com.th.wx_xposed.base.socket.BaseResponse;
+import com.th.wx_xposed.base.Config;
+import com.th.wx_xposed.base.model.socket.BaseRequest;
+import com.th.wx_xposed.base.model.socket.BaseResponse;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -28,7 +31,7 @@ import io.reactivex.annotations.NonNull;
 public class Sender {
     private WebSocketClient mClient;
 
-    private boolean hasOpened = false;
+    private boolean hasConnected = false;
 
     private Map<Integer, ResponseBundle> mCache = new HashMap<>();
 
@@ -44,14 +47,16 @@ public class Sender {
 
     public Sender(int port) {
         try {
-            mClient = new WebSocketClient(new URI(String.format("ws://127.0.0.1:%d", port))) {
+            mClient = new WebSocketClient(new URI(String.format("ws://localhost:%d", port))) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
-                    hasOpened = true;
+                    Log.i(Config.TAG, "socket OnOpen");
+                    hasConnected = true;
                 }
 
                 @Override
                 public void onMessage(String message) {
+                    Log.i(Config.TAG, "socket OnMessage: " + message);
                     BaseResponse baseResponse = new Gson().fromJson(message, BaseResponse.class);
                     ResponseBundle responseBundle = mCache.get(baseResponse.request.extra.index);
 
@@ -64,25 +69,42 @@ public class Sender {
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    hasOpened = false;
+                    Log.i(Config.TAG, "socket onClose, reason: " + reason);
+                    hasConnected = false;
                 }
 
                 @Override
                 public void onError(Exception ex) {
-                    hasOpened = false;
+                    Log.i(Config.TAG, "socket onError: " + ex);
+                    hasConnected = false;
                 }
             };
         } catch (URISyntaxException e) {
-            // just ignore
+            Log.i(Config.TAG, "e: "  + e);
         }
     }
 
-    public <T> Observable<T> send(final BaseRequest request, final Class<? extends T> responseClass) {
+    public void connect() {
+        if (mClient != null) {
+            Log.i(Config.TAG, "begin connect");
+            mClient.connect();
+            hasConnected = true;
+        }
+    }
+
+    public <T extends BaseResponse> Observable<T> send(final BaseRequest request, final Class<? extends T> responseClass) {
         return Observable.create(new ObservableOnSubscribe<T>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<T> e) throws Exception {
-                mCache.put(request.extra.index, new ResponseBundle(e, responseClass));
-                mClient.send(new Gson().toJson(request));
+                if (!hasConnected) {
+                    T response = responseClass.newInstance();
+                    response.state = new BaseResponse.State(BaseResponse.State.ERR_NOT_CONNECTED, BaseResponse.State.MSG_NOT_CONNECTED);
+                    e.onNext(response);
+                } else {
+                    mCache.put(request.extra.index, new ResponseBundle(e, responseClass));
+                    mClient.send(new Gson().toJson(request));
+                }
+
             }
         });
     }

@@ -1,6 +1,5 @@
 package com.th.wx_xposed.server.net;
 
-import common.com.wechatpaymodule.xplib.mock.BaseMock;
 import de.robv.android.xposed.XposedHelpers;
 
 /**
