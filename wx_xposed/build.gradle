@@ -53,7 +53,7 @@ dependencies {
 ext {
     group = "com.th.wx"
     module = "wx_xposed"
-    version = "1.2.5"
+    version = "1.2.6"
     desc = "wx xpsoed utils"
 }
 
